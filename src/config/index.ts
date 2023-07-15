@@ -1,0 +1,1 @@
+export const ZKLINK_ENDPOINT = 'ZKEX Helper'

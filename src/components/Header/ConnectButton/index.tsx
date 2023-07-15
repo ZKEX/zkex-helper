@@ -1,0 +1,61 @@
+import { Button, styled } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
+import Iconfont from 'components/Iconfont'
+import { memo } from 'react'
+import { updateModal } from 'store/app/actions'
+import { useAddress, useWeb3Connected } from 'store/app/hooks'
+import { useAppDispatch } from 'store/index'
+import { useLinkConnected } from 'store/link/hooks'
+import { encryptionAddress } from 'utils/address'
+
+export const ConnectButtonWrap = styled(Button)`
+  height: 36px;
+  font-weight: 400;
+  gap: 4px;
+  background: ${(props) => props.theme.color.DarkLightText80LightBgGrey};
+  border: 1px solid rgba(0, 0, 0, 0);
+  color: ${(props) => props.theme.color.TextColor90};
+  line-height: 24px;
+  white-space: nowrap;
+
+  &:hover {
+    border: 1px solid rgba(142, 205, 30, 1);
+    color: ${(props) => props.theme.color.PrimaryColor30};
+    background: ${(props) => props.theme.color.BgColor02};
+  }
+`
+
+export const ConnectButton = memo(() => {
+  const dispatch = useAppDispatch()
+  const connected = useLinkConnected()
+  const address = useAddress()
+  const web3Connected = useWeb3Connected()
+  const { ENSName } = useWeb3React()
+
+  const onClickConnectButton = () => {
+    if (!web3Connected) {
+      dispatch(updateModal({ modal: 'wallets', open: true }))
+    } else {
+      dispatch(updateModal({ modal: 'account', open: true }))
+    }
+  }
+
+  const renderConnectButton = () => {
+    if (!web3Connected) {
+      return 'Connect Wallet'
+    }
+    if (!connected) {
+      return (
+        <>
+          <Iconfont name="icon-Warning1" size={20}></Iconfont>
+          {ENSName ?? encryptionAddress(address)}
+        </>
+      )
+    }
+    return ENSName ?? encryptionAddress(address)
+  }
+
+  return (
+    <ConnectButtonWrap onClick={onClickConnectButton}>{renderConnectButton()}</ConnectButtonWrap>
+  )
+})
