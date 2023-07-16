@@ -21,8 +21,8 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "connectors": ["./src/connectors/"], 
-      "connectors/*": ["./src/connectors/*"], 
+      "connectors": ["./src/connectors/"],
+      "connectors/*": ["./src/connectors/*"],
       "components/*": ["./src/components/*"],
       "config": ["./src/config/"],
       "config/*": ["./src/config/*"],
@@ -39,6 +39,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "vite.config.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
