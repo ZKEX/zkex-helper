@@ -1,4 +1,3 @@
-import './config/index.ts'
 import './polyfills'
 
 import React from 'react'
