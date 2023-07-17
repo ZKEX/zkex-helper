@@ -9,5 +9,5 @@ export const updateLinkWallet = createAction<{
 export const disconnectLink = createAction('link/disconnectLink')
 export const updateActivating = createAction<{ activating: boolean }>('link/updateActivating')
 export const updateLinkStatus = createAction<LinkStatus>('link/updateLinkStatus')
-export const updateUserPrivateKey = createAction<string>('account/updateUserPrivateKey')
+export const updateUserPrivateKey = createAction<Uint8Array>('link/updateUserPrivateKey')
 

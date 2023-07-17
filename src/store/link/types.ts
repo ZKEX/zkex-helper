@@ -18,5 +18,5 @@ export interface LinkState {
   wallet: Wallet | undefined
   viewInExplorerLink: string
   linkStatus: LinkStatus
-  privateKey: string
+  privateKey: Uint8Array | undefined
 }

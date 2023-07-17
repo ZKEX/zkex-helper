@@ -24,8 +24,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['link/updateLinkWallet'],
-        ignoredPaths: ['link.wallet'],
+        ignoredActions: ['link/updateLinkWallet', 'link/updateUserPrivateKey'],
+        ignoredPaths: ['link.wallet', 'link.privateKey'],
       },
     }).concat(save({ states: PERSISTED_KEYS, debounce: 1000 })),
   preloadedState: load({

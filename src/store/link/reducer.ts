@@ -14,7 +14,7 @@ const initialState: LinkState = {
   wallet: undefined,
   viewInExplorerLink: '',
   linkStatus: LinkStatus.init,
-  privateKey: ''
+  privateKey: undefined
 }
 
 export default createReducer<LinkState>(initialState, (builder) => {

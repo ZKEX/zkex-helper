@@ -1,5 +1,4 @@
 import { Web3Provider } from '@ethersproject/providers'
-import { ethers } from 'ethers'
 import { useSelector } from 'react-redux'
 import { RootState, store } from 'store'
 import {
@@ -31,7 +30,7 @@ export function useLinkStatus() {
 }
 
 export function usePrivateKey() {
-  return useSelector<RootState, string>((state) => state.link.privateKey)
+  return useSelector<RootState, Uint8Array | undefined>((state) => state.link.privateKey)
 }
 
 export async function connectLinkWallet(provider: Web3Provider) {
@@ -62,9 +61,10 @@ export async function connectLinkWallet(provider: Web3Provider) {
     }
     try {
       if (newWallet?.signer?.getPrivateKey) {
+        // ethers.utils.base64.encode()
         dispatch(
           updateUserPrivateKey(
-            ethers.utils.base64.encode(newWallet.signer.getPrivateKey())
+            newWallet.signer.getPrivateKey()
           )
         )
       }
