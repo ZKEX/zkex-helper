@@ -4,9 +4,13 @@ import { Nav } from 'components/Header'
 import Iconfont from 'components/Iconfont'
 import toastify from 'components/Toastify'
 import copy from 'copy-to-clipboard'
-import { ethers } from 'ethers'
+import { hexlify } from 'ethers/lib/utils'
 import { useCallback } from 'react'
-import { usePrivateKey } from 'store/link/hooks'
+import {
+  useEthSignature,
+  useLinkConnected,
+  usePrivateKey,
+} from 'store/link/hooks'
 import { FlexBetween, FlexCenter } from 'styles'
 
 const IndexBody = styled(FlexCenter)`
@@ -20,56 +24,65 @@ const ContentWrap = styled(FlexCenter)`
 const KeyWrap = styled(FlexBetween)`
   margin: 8px 0 0;
   width: 100%;
-  .value{
+  .value {
     margin: 0 8px;
     flex: 1;
   }
-  .label{
+  .label {
     margin: 0 4px;
     font-size: 12px;
-    background: ${props => props.theme.color.DarkBg03LightBg01};
+    background: ${(props) => props.theme.color.DarkBg03LightBg01};
     border-radius: 4px;
     padding: 2px 8px;
   }
-  .copy-icon{
+  .copy-icon {
     cursor: pointer;
   }
 `
 
-const IndexView = () => {
-
+const CryptoInfo = () => {
   const privateKey = usePrivateKey()
-  const copyAddress = useCallback((type: string) => {
-    if (privateKey) {
-      let str: string
-      if (type === '16') {
-        str = ethers.utils.hexlify(privateKey)
-      } else {
-        str = ethers.utils.base64.encode(privateKey)
+  const copyAddress = useCallback(
+    (bytes?: Uint8Array) => {
+      if (!bytes) {
+        toastify.error('bytes is undefined')
       }
-      copy(str)
+      copy(hexlify(bytes!))
       toastify.success('Copied')
-    }
-  }, [privateKey])
+    },
+    [privateKey]
+  )
+
+  const ethSignature = useEthSignature()
+
+  return (
+    <>
+      <KeyWrap onClick={() => copyAddress(privateKey)}>
+        <span className="name">PrivateKey:</span>
+        <span className="value">
+          {privateKey ? hexlify(privateKey) : '-'}
+        </span>{' '}
+        <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+      </KeyWrap>
+      <KeyWrap onClick={() => copyAddress(ethSignature)}>
+        <span className="name">EthSignature:</span>
+        <span className="value">
+          {ethSignature ? hexlify(ethSignature) : '-'}
+        </span>{' '}
+        <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+      </KeyWrap>
+    </>
+  )
+}
+
+const IndexView = () => {
+  const linkConnected = useLinkConnected()
   return (
     <>
       <Nav />
       <IndexBody>
         <ContentWrap>
-          {
-            privateKey ? (
-              <>
-                <KeyWrap onClick={() => copyAddress('16')}>
-                  <span className='name'>PrivateKey<i className="label">Hex</i>:</span><span className='value'>{ethers.utils.hexlify(privateKey)}</span> <Iconfont className='copy-icon' name="icon-copy1" size={16} />
-                </KeyWrap>
-                <KeyWrap onClick={() => copyAddress('64')}>
-                  <span className='name'>PrivateKey<i className="label">Base64</i>:</span><span className='value'>{ethers.utils.base64.encode(privateKey)}</span> <Iconfont className='copy-icon' name="icon-copy1" size={16} />
-                </KeyWrap>
-              </>
-            ) : (
-              <ConnectWalletButton />
-            )
-          }
+          {linkConnected ? <CryptoInfo /> : <ConnectWalletButton />}
         </ContentWrap>
       </IndexBody>
     </>

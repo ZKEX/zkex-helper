@@ -16,6 +16,7 @@ export enum LinkStatus {
 export interface LinkState {
   connected: boolean
   wallet: Wallet | undefined
+  ethSignature: Uint8Array | undefined
   viewInExplorerLink: string
   linkStatus: LinkStatus
   privateKey: Uint8Array | undefined

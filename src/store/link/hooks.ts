@@ -30,7 +30,15 @@ export function useLinkStatus() {
 }
 
 export function usePrivateKey() {
-  return useSelector<RootState, Uint8Array | undefined>((state) => state.link.privateKey)
+  return useSelector<RootState, Uint8Array | undefined>(
+    (state) => state.link.privateKey
+  )
+}
+
+export function useEthSignature() {
+  return useSelector<RootState, Uint8Array | undefined>(
+    (state) => state.link.ethSignature
+  )
 }
 
 export async function connectLinkWallet(provider: Web3Provider) {
@@ -62,11 +70,7 @@ export async function connectLinkWallet(provider: Web3Provider) {
     try {
       if (newWallet?.signer?.getPrivateKey) {
         // ethers.utils.base64.encode()
-        dispatch(
-          updateUserPrivateKey(
-            newWallet.signer.getPrivateKey()
-          )
-        )
+        dispatch(updateUserPrivateKey(newWallet.signer.getPrivateKey()))
       }
     } catch (e) {
       console.log(e)

@@ -4,17 +4,17 @@ import {
   updateConnected,
   updateLinkStatus,
   updateLinkWallet,
-  updateUserPrivateKey
+  updateUserPrivateKey,
 } from 'store/link/actions'
 import { LinkState, LinkStatus } from 'store/link/types'
-
 
 const initialState: LinkState = {
   connected: false,
   wallet: undefined,
   viewInExplorerLink: '',
+  ethSignature: undefined,
   linkStatus: LinkStatus.init,
-  privateKey: undefined
+  privateKey: undefined,
 }
 
 export default createReducer<LinkState>(initialState, (builder) => {
@@ -24,6 +24,7 @@ export default createReducer<LinkState>(initialState, (builder) => {
     })
     .addCase(updateLinkWallet, (state, { payload }) => {
       state.wallet = payload.wallet
+      state.ethSignature = payload.wallet.signer?.seed!
       state.connected = true
     })
     .addCase(disconnectLink, (state) => {
