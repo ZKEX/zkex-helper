@@ -3,6 +3,7 @@ import { memo } from 'react'
 import { FlexItem } from 'styles/index'
 import { ConnectButton } from './ConnectButton'
 import { Logo } from './Logo'
+import { Menu } from './Menu'
 import ThemeSwitch from './ThemeSwitch'
 
 const NavWrap = styled('div')`
@@ -24,7 +25,9 @@ export const Nav = memo(() => {
   return (
     <NavWrap>
       <Logo />
-      <FlexItem />
+      <FlexItem>
+        <Menu />
+      </FlexItem>
       <ConnectButton />
       <ThemeSwitch />
     </NavWrap>

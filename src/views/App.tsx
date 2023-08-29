@@ -7,6 +7,7 @@ import { RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import router from 'router/index'
 import { useCurrentTheme } from 'store/settings/hooks'
+import Updater from 'store/updater'
 import { getMuiGlobalStyleOption } from 'styles/MuiGlobalStyle'
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
           <StyledContainer />
           <RouterProvider router={router} />
           <WalletModal />
+          <Updater />
         </ThemeProvider>
       </Web3Provider>
     </>

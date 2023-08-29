@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --mode testnet",
-    "build": "tsc && vite build --mode testnet",
+    "dev": "vite --mode mainnet",
+    "build": "tsc && vite build --mode mainnet",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -22,6 +22,7 @@
     "@web3-react/metamask": "^8.2.1",
     "@web3-react/types": "^8.2.0",
     "@web3-react/walletconnect": "^8.2.0",
+    "axios": "^1.5.0",
     "buffer": "^6.0.3",
     "copy-to-clipboard": "^3.3.3",
     "ethers": "^5.7.2",

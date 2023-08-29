@@ -89,4 +89,5 @@ export const DarkColor = {
   BoxDialogBg: 'rgba(23, 26, 30, 1)',
   BoxDialogBg02: 'rgba(35, 37, 45, 1)',
   BoxHistoryRow: 'rgba(172, 172, 172, 0.10)',
+  TableRow: 'rgb(35, 37, 45)',
 }

@@ -5,3 +5,8 @@ export declare type MetaMaskProvider = Provider & {
   isConnected?: () => boolean
   providers?: MetaMaskProvider[]
 }
+
+export type L1ID = number
+export type L2ID = number
+export type TokenID = number
+export type Address = string

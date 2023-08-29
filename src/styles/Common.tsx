@@ -1,4 +1,5 @@
-import { css, styled } from '@mui/material'
+import { css, styled } from '@mui/material';
+
 
 export const Flex = styled('div')`
   display: flex;

@@ -89,4 +89,5 @@ export interface ColorType {
   BoxDialogBg: string
   BoxDialogBg02: string
   BoxHistoryRow: string
+  TableRow: string
 }
