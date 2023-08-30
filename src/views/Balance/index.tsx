@@ -1,24 +1,34 @@
-import { L1ID, TokenID } from '@/types';
-import { Web3Provider } from '@ethersproject/providers';
-import { styled } from '@mui/material';
-import { SupportChain, getTokenRemain } from 'api/routes/broker-balance';
-import { Nav } from 'components/Header';
-import { BrokerAddress, BrokerContractAddress } from 'config/index';
-import { ethers } from 'ethers';
-import { Interface, isAddress } from 'ethers/lib/utils';
-import { useEffect, useMemo, useState } from 'react';
-import { getChainInfo, getContractAddress, useSupportNetwork, useTokens } from 'store/app/hooks';
-import SysTable from 'styles/Table';
-import { isGasAddress, isZeroAddress } from 'utils/address';
-import { getWeb3ProviderByLinkId } from 'utils/getWeb3Provider';
-import { toSafeFixed } from 'utils/math';
-import { sendMulticall } from 'utils/multicall';
+import { L1ID, TokenID } from '@/types'
+import { Web3Provider } from '@ethersproject/providers'
+import { styled } from '@mui/material'
+import { SupportChain, getTokenRemain } from 'api/routes/broker-balance'
+import { Nav } from 'components/Header'
+import { BrokerAddress, BrokerContractAddress } from 'config/index'
+import { ethers } from 'ethers'
+import { Interface, isAddress } from 'ethers/lib/utils'
+import { useEffect, useMemo, useState } from 'react'
+import { getChainInfo, getContractAddress, useSupportNetwork, useTokens } from 'store/app/hooks'
+import SysTable from 'styles/Table'
+import { isGasAddress, isZeroAddress } from 'utils/address'
+import { getWeb3ProviderByLinkId } from 'utils/getWeb3Provider'
+import { toSafeFixed } from 'utils/math'
+import { sendMulticall } from 'utils/multicall'
+
 const { Table, TableBody, TableCell, TableHead, TableRow, TableContainer } = SysTable
 
 const BalanceBody = styled('div')`
   width: 100%;
   height: 100%;
   padding: 85px 18px 18px;
+`
+const Span = styled('span')`
+  &.s1 {
+    color: #c6ddc4;
+  }
+
+  &.s2 {
+    color: #708b6e;
+  }
 `
 
 interface ITokenBalance {
@@ -30,7 +40,7 @@ interface ITokenBalance {
 }
 
 const balanceOfAbi = [
-  'function balanceOf(address) view returns (uint256)',
+  'function balanceOf(address) view returns (uint256)'
 ]
 
 
@@ -60,8 +70,10 @@ const BalanceView = () => {
   const [gasBalance, setGasBalance] = useState<Record<L1ID, string>>({})
   const getGasBalance = async (currentNet: SupportChain) => {
     const { layerOneChainId } = currentNet
+
     const provider = await getWeb3ProviderByLinkId(layerOneChainId) as Web3Provider
     const _res = (await provider.getBalance(BrokerAddress)).toString()
+
     setGasBalance(pre => {
       return {
         ...pre,
@@ -82,7 +94,7 @@ const BalanceView = () => {
                   id: item.id,
                   symbol: item.symbol,
                   balance: res.result
-                },
+                }
               }
             })
           }
@@ -128,7 +140,6 @@ const BalanceView = () => {
             tokenId.push(item.id)
           }
         })
-
 
 
         const iface = new Interface(balanceOfAbi)
@@ -177,14 +188,14 @@ const BalanceView = () => {
                 balance: {
                   [layerOneChainId]: balances[index]
                 }
-              },
+              }
             }
           })
 
         })
 
       } catch (e) {
-        // 
+        //
       }
     }
   }
@@ -202,7 +213,7 @@ const BalanceView = () => {
 
     supportToken.forEach(token => {
       const _row = [token.symbol]
-
+      const exclude = ['USDC', 'MATIC', 'DAI', 'USDT']
       netList.forEach(network => {
 
         const _decimals = token.chains[network.chainId]?.decimals || 18
@@ -210,7 +221,10 @@ const BalanceView = () => {
         const _l1Balance = l1Balances[token.id] ? l1Balances[token.id]['balance'][network.layerOneChainId] : 0
         const _l2Balance = l2Balances[token.id] ? l2Balances[token.id]['balance'][network.chainId] : 0
 
-        _row.push(`${_l1Balance ? toSafeFixed(ethers.utils.formatUnits(_l1Balance, _decimals), 4) : '0'}/${_l2Balance ? toSafeFixed(ethers.utils.formatUnits(_l2Balance, 18), 4) : '0'}`)
+        const formatL1Balance = _l1Balance ? toSafeFixed(ethers.utils.formatUnits(_l1Balance, _decimals), exclude.includes(_row[0]) ? 1 : 4) : '0'
+        const formatL2Balance = _l2Balance ? toSafeFixed(ethers.utils.formatUnits(_l2Balance, 18), exclude.includes(_row[0]) ? 1 : 4) : '0'
+        const value = formatL1Balance === '0' && formatL2Balance === '0' ? '--' : `${formatL1Balance}/${formatL2Balance}`
+        _row.push(value)
       })
 
       tableRow.push(_row)
@@ -236,7 +250,17 @@ const BalanceView = () => {
             {
               tableBody.map((row, index) => <TableRow key={'row-' + index}>
                 {
-                  row.map((col, colIndex) => <TableCell key={'col-' + colIndex}>{col}</TableCell>)
+                  row.map((col, colIndex) => <TableCell key={'col-' + colIndex}>
+                    {
+                      col === '--' || !col.includes('/') ?
+                        col
+                        : <>
+                          <Span className={'s1'}>{col.split('/')[0]}</Span>
+                          /
+                          <Span className={'s2'}>{col.split('/')[1]}</Span>
+                        </>
+                    }
+                  </TableCell>)
                 }
               </TableRow>)
             }
