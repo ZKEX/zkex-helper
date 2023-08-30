@@ -81,7 +81,7 @@ export const Menu = memo(() => {
   const location = useLocation()
   return (
     <MenuWrap>
-      {menuRouterList.map((item, index) => {
+      {menuRouterList.map((item) => {
         const path = item.path
         const active = location.pathname === item.path ? 'active' : ''
         return (
@@ -89,8 +89,7 @@ export const Menu = memo(() => {
             to={path}
             target={`${item.name === 'Perp(Testnet)' ? '_blank' : '_self'}`}
             key={item.name}
-            className={active}
-          >
+            className={active}>
             {item.title}
           </Link>
         )
