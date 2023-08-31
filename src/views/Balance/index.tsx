@@ -30,6 +30,12 @@ const Span = styled('span')`
     color: #708b6e;
   }
 `
+const Fast = styled('span')`
+  padding: 0px 4px;
+  background-color: seagreen;
+  border-radius: 6px;
+  margin-left: 4px;
+`
 
 interface ITokenBalance {
   [id: TokenID]: {
@@ -47,7 +53,6 @@ const balanceOfAbi = [
 const BalanceView = () => {
   const tokenList = useTokens()
   const netList = useSupportNetwork()
-
   const supportToken = useMemo(() => {
     return Object.values(tokenList).filter(token => Object.keys(token.chains).length !== 0)
   }, [tokenList])
@@ -73,7 +78,6 @@ const BalanceView = () => {
 
     const provider = await getWeb3ProviderByLinkId(layerOneChainId) as Web3Provider
     const _res = (await provider.getBalance(BrokerAddress)).toString()
-
     setGasBalance(pre => {
       return {
         ...pre,
@@ -107,7 +111,6 @@ const BalanceView = () => {
 
   const getChainL1Balance = async (currentNet: SupportChain) => {
     const { chainId, layerOneChainId } = currentNet
-
     const contractAddress = getContractAddress(layerOneChainId)
     if (!contractAddress || !BrokerContractAddress[layerOneChainId]) return
 
@@ -115,7 +118,6 @@ const BalanceView = () => {
       const address = token.chains[chainId]?.address || ''
       return address && isGasAddress(address)
     })
-
 
     const queueTokens = supportToken.filter((token) => {
       const address = token.chains[chainId]?.address || ''
@@ -127,9 +129,8 @@ const BalanceView = () => {
       )
     }) ?? []
 
-
     let balances: any[] = []
-    if (queueTokens.length) {
+  //  if (queueTokens.length) {
       try {
         const tokenAddresses: string[] = []
         const tokenId: number[] = []
@@ -140,8 +141,6 @@ const BalanceView = () => {
             tokenId.push(item.id)
           }
         })
-
-
         const iface = new Interface(balanceOfAbi)
         const fragment = iface.getFunction('balanceOf')
         const calldata = iface.encodeFunctionData(fragment, [BrokerContractAddress[layerOneChainId]])
@@ -156,14 +155,13 @@ const BalanceView = () => {
           tokenAddresses,
           calls
         )
-        balances = resultData.map((r: any) => r.toString())
 
+        balances = resultData.map((r: any) => r.toString())
 
         if (gasToken) {
           balances.push((await provider.getBalance(BrokerContractAddress[layerOneChainId])).toString())
           tokenId.push(gasToken.id)
         }
-
 
         tokenId.forEach((item, index) => {
           setL1Balances((pre: any) => {
@@ -197,7 +195,7 @@ const BalanceView = () => {
       } catch (e) {
         //
       }
-    }
+   // }
   }
 
   const tableBody = useMemo(() => {
@@ -217,13 +215,14 @@ const BalanceView = () => {
       netList.forEach(network => {
 
         const _decimals = token.chains[network.chainId]?.decimals || 18
+        const isFast = token.chains[network.chainId]?.fastWithdraw
 
         const _l1Balance = l1Balances[token.id] ? l1Balances[token.id]['balance'][network.layerOneChainId] : 0
         const _l2Balance = l2Balances[token.id] ? l2Balances[token.id]['balance'][network.chainId] : 0
 
         const formatL1Balance = _l1Balance ? toSafeFixed(ethers.utils.formatUnits(_l1Balance, _decimals), exclude.includes(_row[0]) ? 1 : 4) : '0'
         const formatL2Balance = _l2Balance ? toSafeFixed(ethers.utils.formatUnits(_l2Balance, 18), exclude.includes(_row[0]) ? 1 : 4) : '0'
-        const value = formatL1Balance === '0' && formatL2Balance === '0' ? '--' : `${formatL1Balance}/${formatL2Balance}`
+        const value = formatL1Balance === '0' && formatL2Balance === '0' ? '--' : `${formatL1Balance}/${formatL2Balance}/${isFast}`
         _row.push(value)
       })
 
@@ -258,6 +257,10 @@ const BalanceView = () => {
                           <Span className={'s1'}>{col.split('/')[0]}</Span>
                           /
                           <Span className={'s2'}>{col.split('/')[1]}</Span>
+                          {
+                            col.split('/')[2] === 'true' ?
+                              <Fast>fast</Fast>:null
+                          }
                         </>
                     }
                   </TableCell>)
