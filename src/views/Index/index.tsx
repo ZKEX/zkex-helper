@@ -13,7 +13,7 @@ import {
   usePubKey,
   usePubKeyHash,
 } from 'store/link/hooks'
-import { FlexBetween, FlexCenter } from 'styles'
+import { FlexCenter } from 'styles'
 
 const IndexBody = styled(FlexCenter)`
   width: 100%;
