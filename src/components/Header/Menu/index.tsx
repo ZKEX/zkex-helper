@@ -71,6 +71,11 @@ const menuRouterList: IMenuRouterList[] = [
     title: `PrivateKey`,
   },
   {
+    name: 'ChangePubKey',
+    path: '/changepubkey',
+    title: `ChangePubKey`,
+  },
+  {
     name: 'Balance',
     path: '/balance',
     title: `Balance`,

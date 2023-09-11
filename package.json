@@ -34,7 +34,7 @@
     "redux-localstorage-simple": "^2.5.1",
     "usehooks-ts": "^2.9.1",
     "vite-plugin-svgr": "^3.2.0",
-    "zklink-js-sdk": "1.0.0"
+    "zklink-js-sdk": "^1.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",

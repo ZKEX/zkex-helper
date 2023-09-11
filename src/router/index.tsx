@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import BalanceView from 'views/Balance'
+import { ChangePubKeyView } from 'views/ChangePubKey'
 import Home from 'views/Index'
 
 const AppRouter = createBrowserRouter(
@@ -11,6 +12,10 @@ const AppRouter = createBrowserRouter(
     {
       path: '/balance',
       element: <BalanceView />,
+    },
+    {
+      path: '/changepubkey',
+      element: <ChangePubKeyView />,
     },
   ],
   {

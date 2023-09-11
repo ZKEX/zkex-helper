@@ -4920,10 +4920,10 @@ yocto-queue@^0.1.0:
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zklink-js-sdk@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/zklink-js-sdk/-/zklink-js-sdk-1.0.0.tgz#42721541e017a794876e097138e1ba654af0be2e"
-  integrity sha512-G2QBO2igo8RSTfiNCN10aiMHZpviVCG5olT1pOOp/ZTGXESyxgsmvUl16Nrpa199o6+Qr4DNdEzO+q1/qawnZA==
+zklink-js-sdk@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/zklink-js-sdk/-/zklink-js-sdk-1.0.5.tgz#f57d10c51e5f1df3aee779327b50a2eed75c9228"
+  integrity sha512-hmFV7qBvS4okmMmLFXgOp020EwEzuxK6ZscVbgd7JWqJ2PNBw7O3jtzJoSv00MP1hlKnqcXl/hXoYFbdJlXHTQ==
   dependencies:
     axios "^0.21.2"
     websocket "^1.0.30"
