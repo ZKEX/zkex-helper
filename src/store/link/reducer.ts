@@ -5,6 +5,8 @@ import {
   updateLinkStatus,
   updateLinkWallet,
   updateUserPrivateKey,
+  updateUserPubKey,
+  updateUserPubKeyHash,
 } from 'store/link/actions'
 import { LinkState, LinkStatus } from 'store/link/types'
 
@@ -15,6 +17,8 @@ const initialState: LinkState = {
   ethSignature: undefined,
   linkStatus: LinkStatus.init,
   privateKey: undefined,
+  pubKey: undefined,
+  pubKeyHash: undefined,
 }
 
 export default createReducer<LinkState>(initialState, (builder) => {
@@ -36,5 +40,11 @@ export default createReducer<LinkState>(initialState, (builder) => {
     })
     .addCase(updateUserPrivateKey, (state, { payload }) => {
       state.privateKey = payload
+    })
+    .addCase(updateUserPubKey, (state, { payload }) => {
+      state.pubKey = payload
+    })
+    .addCase(updateUserPubKeyHash, (state, { payload }) => {
+      state.pubKeyHash = payload
     })
 })

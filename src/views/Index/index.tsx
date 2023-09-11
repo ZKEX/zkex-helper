@@ -1,4 +1,4 @@
-import { styled } from '@mui/material'
+import { Stack, styled } from '@mui/material'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { Nav } from 'components/Header'
 import Iconfont from 'components/Iconfont'
@@ -10,6 +10,8 @@ import {
   useEthSignature,
   useLinkConnected,
   usePrivateKey,
+  usePubKey,
+  usePubKeyHash,
 } from 'store/link/hooks'
 import { FlexBetween, FlexCenter } from 'styles'
 
@@ -21,19 +23,29 @@ const ContentWrap = styled(FlexCenter)`
   min-width: 200px;
   flex-direction: column;
 `
-const KeyWrap = styled(FlexBetween)`
+const KeyWrap = styled(Stack)`
+  flex-direction: row;
+  align-items: center;
   margin: 8px 0 0;
+  gap: 8px;
   width: 100%;
   .value {
-    margin: 0 8px;
-    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    &:hover {
+      background-color: rgba(160, 238, 9, 0.2);
+    }
   }
-  .label {
-    margin: 0 4px;
-    font-size: 12px;
+  .name {
+    font-size: 14px;
     background: ${(props) => props.theme.color.DarkBg03LightBg01};
     border-radius: 4px;
-    padding: 2px 8px;
+    padding: 4px 8px;
   }
   .copy-icon {
     cursor: pointer;
@@ -42,34 +54,47 @@ const KeyWrap = styled(FlexBetween)`
 
 const CryptoInfo = () => {
   const privateKey = usePrivateKey()
-  const copyAddress = useCallback(
-    (bytes?: Uint8Array) => {
-      if (!bytes) {
-        toastify.error('bytes is undefined')
-      }
-      copy(hexlify(bytes!))
-      toastify.success('Copied')
-    },
-    [privateKey]
-  )
+  const pubKey = usePubKey()
+  const pubKeyHash = usePubKeyHash()
+  const copyAddress = useCallback((bytes?: Uint8Array) => {
+    if (!bytes) {
+      toastify.error('bytes is undefined')
+    }
+    copy(hexlify(bytes!))
+    toastify.success('Copied')
+  }, [])
 
   const ethSignature = useEthSignature()
 
   return (
     <>
+      <KeyWrap onClick={() => copyAddress(pubKeyHash)}>
+        <span className="name">PubKeyHash:</span>
+        <div className="value">
+          {pubKeyHash ? hexlify(pubKeyHash) : '-'}
+          <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+        </div>
+      </KeyWrap>
+      <KeyWrap onClick={() => copyAddress(pubKey)}>
+        <span className="name">PubKey:</span>
+        <div className="value">
+          {pubKey ? hexlify(pubKey) : '-'}
+          <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+        </div>
+      </KeyWrap>
       <KeyWrap onClick={() => copyAddress(privateKey)}>
         <span className="name">PrivateKey:</span>
-        <span className="value">
+        <div className="value">
           {privateKey ? hexlify(privateKey) : '-'}
-        </span>{' '}
-        <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+          <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+        </div>
       </KeyWrap>
       <KeyWrap onClick={() => copyAddress(ethSignature)}>
         <span className="name">EthSignature:</span>
-        <span className="value">
+        <div className="value">
           {ethSignature ? hexlify(ethSignature) : '-'}
-        </span>{' '}
-        <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+          <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+        </div>
       </KeyWrap>
     </>
   )

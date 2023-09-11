@@ -5,9 +5,12 @@ import {
   updateLinkStatus,
   updateLinkWallet,
   updateUserPrivateKey,
+  updateUserPubKey,
+  updateUserPubKeyHash,
 } from 'store/link/actions'
 import { Wallet } from 'zklink-js-sdk'
 import { LinkStatus } from './types'
+import { arrayify } from 'ethers/lib/utils'
 
 export function useLinkWallet() {
   return useSelector<RootState, Wallet | undefined>(
@@ -32,6 +35,16 @@ export function useLinkStatus() {
 export function usePrivateKey() {
   return useSelector<RootState, Uint8Array | undefined>(
     (state) => state.link.privateKey
+  )
+}
+export function usePubKey() {
+  return useSelector<RootState, Uint8Array | undefined>(
+    (state) => state.link.pubKey
+  )
+}
+export function usePubKeyHash() {
+  return useSelector<RootState, Uint8Array | undefined>(
+    (state) => state.link.pubKeyHash
   )
 }
 
@@ -71,6 +84,10 @@ export async function connectLinkWallet(provider: Web3Provider) {
       if (newWallet?.signer?.getPrivateKey) {
         // ethers.utils.base64.encode()
         dispatch(updateUserPrivateKey(newWallet.signer.getPrivateKey()))
+        dispatch(updateUserPubKey(arrayify(await newWallet.signer.pubKey())))
+        dispatch(
+          updateUserPubKeyHash(arrayify(await newWallet.signer.pubKeyHash()))
+        )
       }
     } catch (e) {
       console.log(e)

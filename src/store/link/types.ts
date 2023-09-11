@@ -20,4 +20,6 @@ export interface LinkState {
   viewInExplorerLink: string
   linkStatus: LinkStatus
   privateKey: Uint8Array | undefined
+  pubKey: Uint8Array | undefined
+  pubKeyHash: Uint8Array | undefined
 }
