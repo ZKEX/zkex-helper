@@ -1,7 +1,7 @@
-import toastify from 'components/Toastify'
 import { ConnectorNames, connectorsByName } from 'connectors'
 import useConnectLinkWallet from 'hooks/useConnectLinkWallet'
 import { useCallback } from 'react'
+import toast from 'react-hot-toast'
 import { useAppDispatch } from 'store'
 import { updateModal } from 'store/app/actions'
 import { updateLinkStatus } from 'store/link/actions'
@@ -29,7 +29,7 @@ const useConnectWallet = () => {
         dispatch(updateLinkStatus(LinkStatus.linkL1Failed))
         dispatch(updateConnectorName({ connectorName: undefined }))
         try {
-          toastify.error((e as any).message)
+          toast.error((e as any).message)
         } finally {
           // eslint-disable-next-line no-unsafe-finally
           return Promise.reject()

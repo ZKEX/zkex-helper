@@ -15,12 +15,3 @@ export const updateActivating = createAction<{ activating: boolean }>(
 export const updateLinkStatus = createAction<LinkStatus>(
   'link/updateLinkStatus'
 )
-export const updateUserPrivateKey = createAction<Uint8Array>(
-  'link/updateUserPrivateKey'
-)
-export const updateUserPubKey = createAction<Uint8Array>(
-  'link/updateUserPubKey'
-)
-export const updateUserPubKeyHash = createAction<Uint8Array>(
-  'link/updateUserPubKeyHash'
-)

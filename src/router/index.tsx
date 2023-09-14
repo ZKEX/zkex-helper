@@ -1,14 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom'
 import BalanceView from 'views/Balance'
+import { Layer2HashView } from 'views/Layer2Hash'
 import { SignView } from 'views/Sign'
-import Home from 'views/Index'
 import { OnChainView } from 'views/Sign/OnChain'
 import { TransferView } from 'views/Sign/Transfer'
 
 export const routerItems = [
   {
     path: '/',
-    element: <Home />,
+    element: <Layer2HashView />,
   },
   {
     path: '/balance',

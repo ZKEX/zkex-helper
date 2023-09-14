@@ -1,16 +1,9 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { useSelector } from 'react-redux'
 import { RootState, store } from 'store'
-import {
-  updateLinkStatus,
-  updateLinkWallet,
-  updateUserPrivateKey,
-  updateUserPubKey,
-  updateUserPubKeyHash,
-} from 'store/link/actions'
+import { updateLinkStatus, updateLinkWallet } from 'store/link/actions'
 import { Wallet } from 'zklink-js-sdk'
 import { LinkStatus } from './types'
-import { arrayify } from 'ethers/lib/utils'
 
 export function useLinkWallet() {
   return useSelector<RootState, Wallet | undefined>(
@@ -30,28 +23,6 @@ export function useViewInExplorerLink() {
 
 export function useLinkStatus() {
   return useSelector<RootState, LinkStatus>((state) => state.link.linkStatus)
-}
-
-export function usePrivateKey() {
-  return useSelector<RootState, Uint8Array | undefined>(
-    (state) => state.link.privateKey
-  )
-}
-export function usePubKey() {
-  return useSelector<RootState, Uint8Array | undefined>(
-    (state) => state.link.pubKey
-  )
-}
-export function usePubKeyHash() {
-  return useSelector<RootState, Uint8Array | undefined>(
-    (state) => state.link.pubKeyHash
-  )
-}
-
-export function useEthSignature() {
-  return useSelector<RootState, Uint8Array | undefined>(
-    (state) => state.link.ethSignature
-  )
 }
 
 export async function connectLinkWallet(provider: Web3Provider) {
@@ -80,18 +51,7 @@ export async function connectLinkWallet(provider: Web3Provider) {
     } else {
       newWallet = await Wallet.fromEthSigner(web3Signer)
     }
-    try {
-      if (newWallet?.signer?.getPrivateKey) {
-        // ethers.utils.base64.encode()
-        dispatch(updateUserPrivateKey(newWallet.signer.getPrivateKey()))
-        dispatch(updateUserPubKey(arrayify(await newWallet.signer.pubKey())))
-        dispatch(
-          updateUserPubKeyHash(arrayify(await newWallet.signer.pubKeyHash()))
-        )
-      }
-    } catch (e) {
-      console.log(e)
-    }
+
     dispatch(updateLinkWallet({ wallet: newWallet }))
     dispatch(updateLinkStatus(LinkStatus.linkL2Success))
   } catch (e) {

@@ -1,13 +1,21 @@
 import { Typography, Button, Stack } from '@mui/material'
-import { hexlify } from 'ethers/lib/utils'
-import { memo, useState } from 'react'
-import { useLinkWallet, usePubKeyHash } from 'store/link/hooks'
+import { arrayify, hexlify } from 'ethers/lib/utils'
+import { memo, useEffect, useState } from 'react'
+import { useLinkWallet } from 'store/link/hooks'
 
 export const OnChainView = memo(() => {
-  const pubKeyHash = usePubKeyHash()
   const wallet = useLinkWallet()
-
+  const [pubKeyHash, setPubKeyHash] = useState<Uint8Array>()
   const [signedData, setSignedData] = useState<any>()
+
+  useEffect(() => {
+    if (!wallet) {
+      return
+    }
+    wallet?.signer?.pubKeyHash().then((r) => {
+      setPubKeyHash(arrayify(r))
+    })
+  }, [wallet])
 
   return (
     <Stack spacing={2}>
@@ -32,7 +40,19 @@ export const OnChainView = memo(() => {
             newPkHash: hexlify(pubKeyHash!),
           })!
 
-          setSignedData(JSON.stringify(data.tx))
+          setSignedData(`
+            curl --location 'http://127.0.0.1:3030'
+            --data '{
+              "id": 1,
+              "jsonrpc": "2.0",
+              "method": "sendTransaction",
+              "params": [
+                ${JSON.stringify(data.tx)},
+                null,
+                null
+              ]
+            }'
+          `)
         }}>
         Sign Transaction
       </Button>

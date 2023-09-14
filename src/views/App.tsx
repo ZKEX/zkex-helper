@@ -1,10 +1,9 @@
 import { GlobalStyles, ThemeProvider } from '@mui/material'
 import 'assets/iconfont/iconfont.css'
-import StyledContainer from 'components/StyledToastContainer'
 import { WalletModal } from 'components/WalletModal'
 import Web3Provider from 'components/Web3Provider'
+import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router-dom'
-import 'react-toastify/dist/ReactToastify.css'
 import router from 'router/index'
 import { useCurrentTheme } from 'store/settings/hooks'
 import Updater from 'store/updater'
@@ -22,8 +21,8 @@ const App = () => {
               return options
             }}
           />
-          <StyledContainer />
           <RouterProvider router={router} />
+          <Toaster />
           <WalletModal />
           <Updater />
         </ThemeProvider>

@@ -2,17 +2,11 @@ import { Stack, styled } from '@mui/material'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { Nav } from 'components/Header'
 import Iconfont from 'components/Iconfont'
-import toastify from 'components/Toastify'
 import copy from 'copy-to-clipboard'
-import { hexlify } from 'ethers/lib/utils'
-import { useCallback } from 'react'
-import {
-  useEthSignature,
-  useLinkConnected,
-  usePrivateKey,
-  usePubKey,
-  usePubKeyHash,
-} from 'store/link/hooks'
+import { arrayify, hexlify } from 'ethers/lib/utils'
+import { useCallback, useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
+import { useLinkConnected, useLinkWallet } from 'store/link/hooks'
 import { FlexCenter } from 'styles'
 
 const IndexBody = styled(FlexCenter)`
@@ -53,18 +47,34 @@ const KeyWrap = styled(Stack)`
 `
 
 const CryptoInfo = () => {
-  const privateKey = usePrivateKey()
-  const pubKey = usePubKey()
-  const pubKeyHash = usePubKeyHash()
+  const wallet = useLinkWallet()
+  const [pubKey, setPubKey] = useState<Uint8Array>()
+  const [pubKeyHash, setPubKeyHash] = useState<Uint8Array>()
+  const [privateKey, setPrivateKey] = useState<Uint8Array>()
+  const [ethSignature, setEthSignature] = useState<Uint8Array>()
+
+  useEffect(() => {
+    if (!wallet) {
+      return
+    }
+    wallet?.signer?.pubKey().then((r) => {
+      setPubKey(arrayify(r))
+    })
+    wallet?.signer?.pubKeyHash().then((r) => {
+      setPubKeyHash(arrayify(r))
+    })
+    setPrivateKey(wallet?.signer?.getPrivateKey())
+
+    setEthSignature(wallet?.signer?.seed)
+  }, [wallet])
+
   const copyAddress = useCallback((bytes?: Uint8Array) => {
     if (!bytes) {
-      toastify.error('bytes is undefined')
+      toast.error('bytes is undefined')
     }
     copy(hexlify(bytes!))
-    toastify.success('Copied')
+    toast.success('Copied')
   }, [])
-
-  const ethSignature = useEthSignature()
 
   return (
     <>
@@ -100,7 +110,7 @@ const CryptoInfo = () => {
   )
 }
 
-const IndexView = () => {
+export const Layer2HashView = () => {
   const linkConnected = useLinkConnected()
   return (
     <>
@@ -113,5 +123,3 @@ const IndexView = () => {
     </>
   )
 }
-
-export default IndexView

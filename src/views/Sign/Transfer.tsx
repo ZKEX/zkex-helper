@@ -1,4 +1,4 @@
-import { Button, Stack, TextField, Typography } from '@mui/material'
+import { Button, Stack, TextField } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
 import { ZKEX_API_URL, ZKLINK_API_URL } from 'config/index'
@@ -68,8 +68,7 @@ export const TransferView = memo(() => {
   const [subNonce, setSubNonce] = useState<string>('')
   const [accessToken, setAccessToken] = useState()
 
-  const [signedData, setSignedData] = useState<any>()
-  const [ethSignature, setEthSignature] = useState<any>()
+  const [curl, setCurl] = useState<any>()
 
   useEffect(() => {
     if (!tokenId) {
@@ -255,16 +254,24 @@ export const TransferView = memo(() => {
             nonce: Number(subNonce),
           })!
 
-          setSignedData(JSON.stringify(data.tx))
-          setEthSignature(JSON.stringify(data.ethereumSignature))
+          setCurl(`
+            curl --location 'http://127.0.0.1:3030'
+            --data '{
+              "id": 1,
+              "jsonrpc": "2.0",
+              "method": "sendTransaction",
+              "params": [
+                ${JSON.stringify(data.tx)},
+                ${JSON.stringify(data.ethereumSignature)},
+                null
+              ]
+            }'
+          `)
         }}>
         Sign Transaction
       </Button>
 
-      <Typography variant="h5">Transaction Data</Typography>
-      <code>{signedData}</code>
-      <Typography variant="h5">Eth Signature</Typography>
-      <code>{ethSignature}</code>
+      <code>{curl}</code>
     </Stack>
   )
 })

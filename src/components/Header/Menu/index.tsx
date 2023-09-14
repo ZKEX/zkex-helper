@@ -66,7 +66,7 @@ interface IMenuRouterList {
 
 const menuRouterList: IMenuRouterList[] = [
   {
-    name: 'PrivateKey',
+    name: 'Layer2 Hash',
     path: '/',
   },
   {
@@ -78,7 +78,7 @@ const menuRouterList: IMenuRouterList[] = [
     path: '/sign/transfer',
   },
   {
-    name: 'Balance',
+    name: 'Broker Balance',
     path: '/balance',
   },
 ]
