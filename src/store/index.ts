@@ -23,10 +23,7 @@ export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['link/updateLinkWallet', 'link/updateUserPrivateKey'],
-        ignoredPaths: ['link.wallet', 'link.privateKey'],
-      },
+      serializableCheck: false,
     }).concat(save({ states: PERSISTED_KEYS, debounce: 1000 })),
   preloadedState: load({
     states: PERSISTED_KEYS,

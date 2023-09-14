@@ -1,8 +1,9 @@
-import { L1ID } from "@/types"
+import { L1ID } from '@/types'
 
 export const APP_ENV = import.meta.env.VITE_APP_ENV
 export const STATIC_HOST = import.meta.env.VITE_STATIC_HOST
 export const ZKEX_API_URL = import.meta.env.VITE_ZKEX_ENDPOINT + '/api-v1/api'
+export const ZKLINK_API_URL = import.meta.env.VITE_ZKLINK_ENDPOINT
 export const BrokerContractAddress: Record<L1ID, string> = {
   '137': '0x7bd79DEd935B542fb22c74305a4d2A293C18483a',
   '43114': '0x664e1CC564aacA017c0D4C47d1b720a73aA83E10',
@@ -13,6 +14,6 @@ export const BrokerContractAddress: Record<L1ID, string> = {
   '42161': '0xd5941F19692D71fc68F2680671DBD6dD50d35BD2',
   '300': '0x9dc75660523581d56d4c8Efd5819161e15bBc88c',
   '8453': '0x7c56DA81caACEcEEfF624BAA93B314e793bC88b3',
-  '10': '0x9dc75660523581d56d4c8Efd5819161e15bBc88c'
+  '10': '0x9dc75660523581d56d4c8Efd5819161e15bBc88c',
 }
-export const BrokerAddress = "0x5343d6e6fbdaeb372879e73a80d8e99ccd5f4058"
+export const BrokerAddress = '0x5343d6e6fbdaeb372879e73a80d8e99ccd5f4058'

@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --mode mainnet",
-    "build": "tsc && vite build --mode mainnet",
+    "dev:testnet": "vite --mode testnet",
+    "dev:mainnet": "vite --mode mainnet",
+    "build:mainnet": "tsc && vite build --mode mainnet",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

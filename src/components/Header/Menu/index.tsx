@@ -1,6 +1,7 @@
 import { styled } from '@mui/material'
 import { memo } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useRoutes } from 'react-router-dom'
+import { routerItems } from 'router/index'
 
 const MenuWrap = styled('div')`
   display: flex;
@@ -60,7 +61,6 @@ interface IMenuRouterListChild {
 interface IMenuRouterList {
   name: string
   path: string
-  title: string
   child?: IMenuRouterListChild[]
 }
 
@@ -68,34 +68,34 @@ const menuRouterList: IMenuRouterList[] = [
   {
     name: 'PrivateKey',
     path: '/',
-    title: `PrivateKey`,
   },
   {
-    name: 'ChangePubKey',
-    path: '/changepubkey',
-    title: `ChangePubKey`,
+    name: 'Sign ChangePubKey',
+    path: '/sign/changepubkey',
+  },
+  {
+    name: 'Sign Transfer',
+    path: '/sign/transfer',
   },
   {
     name: 'Balance',
     path: '/balance',
-    title: `Balance`,
   },
 ]
 
 export const Menu = memo(() => {
   const location = useLocation()
+  const routes = useRoutes(routerItems)
+  console.log(routes)
+
   return (
     <MenuWrap>
       {menuRouterList.map((item) => {
         const path = item.path
         const active = location.pathname === item.path ? 'active' : ''
         return (
-          <Link
-            to={path}
-            target={`${item.name === 'Perp(Testnet)' ? '_blank' : '_self'}`}
-            key={item.name}
-            className={active}>
-            {item.title}
+          <Link to={path} key={item.name} className={active}>
+            {item.name}
           </Link>
         )
       })}

@@ -1,25 +1,23 @@
-import { Box, Container, Stack, styled } from '@mui/material'
+import { Container, Stack, styled } from '@mui/material'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { Nav } from 'components/Header'
 import { memo } from 'react'
 import { useLinkConnected } from 'store/link/hooks'
-import { OnChainView } from './OnChain'
+import { Outlet } from 'react-router-dom'
 
 const Wrapper = styled(Container)`
-  padding: 200px 0;
+  padding: 128px 0;
 `
 
-export const ChangePubKeyView = memo(() => {
+export const SignView = memo(() => {
   const linkConnected = useLinkConnected()
 
   if (!linkConnected) {
     return (
       <Wrapper>
         <Nav />
-        <Stack alignItems="center">
-          <Box>
-            <ConnectWalletButton />
-          </Box>
+        <Stack alignItems="center" sx={{ padding: '200px 0' }}>
+          <ConnectWalletButton />
         </Stack>
       </Wrapper>
     )
@@ -27,7 +25,7 @@ export const ChangePubKeyView = memo(() => {
   return (
     <Wrapper>
       <Nav />
-      <OnChainView />
+      <Outlet></Outlet>
     </Wrapper>
   )
 })
