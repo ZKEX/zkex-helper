@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
+import { ActivateView } from 'views/Account/Activate'
 import BalanceView from 'views/Balance'
 import { Layer2HashView } from 'views/Layer2Hash'
 import { SignView } from 'views/Sign'
@@ -9,6 +10,10 @@ export const routerItems = [
   {
     path: '/',
     element: <Layer2HashView />,
+  },
+  {
+    path: '/account',
+    element: <ActivateView />,
   },
   {
     path: '/balance',
