@@ -2,32 +2,27 @@ import { ConnectorNames, connectorsByName } from 'connectors'
 import useConnectLinkWallet from 'hooks/useConnectLinkWallet'
 import { useCallback } from 'react'
 import toast from 'react-hot-toast'
-import { useAppDispatch } from 'store'
-import { updateModal } from 'store/app/actions'
-import { updateLinkStatus } from 'store/link/actions'
-import { LinkStatus } from 'store/link/types'
-import { updateConnectorName } from 'store/settings/actions'
-import { useCurrentConnectorName } from 'store/settings/hooks'
+import { useSelectedWalletStore } from 'store/app/wallet'
+import { LinkStatus, useLinkWalletStore } from 'store/link/wallet'
 
 const useConnectWallet = () => {
-  const dispatch = useAppDispatch()
-  const currentConnectorName = useCurrentConnectorName()
   const connectToLink = useConnectLinkWallet()
+  const { selectedWallet, updateSelectedWallet } = useSelectedWalletStore()
+  const { updateLinkStatus } = useLinkWalletStore()
   return useCallback(
     async (connectorName: ConnectorNames) => {
-      dispatch(updateLinkStatus(LinkStatus.linkL1Pending))
+      updateLinkStatus(LinkStatus.linkL1Pending)
       try {
-        await connectorsByName[connectorName || currentConnectorName].activate()
-        dispatch(updateConnectorName({ connectorName }))
+        await connectorsByName[connectorName || selectedWallet].activate()
+        updateSelectedWallet(connectorName)
 
-        dispatch(updateLinkStatus(LinkStatus.linkL1Success))
-        dispatch(updateModal({ modal: 'wallets', open: false }))
-        await connectToLink(currentConnectorName)
+        updateLinkStatus(LinkStatus.linkL1Success)
+        await connectToLink(connectorName)
 
         return Promise.resolve()
       } catch (e) {
-        dispatch(updateLinkStatus(LinkStatus.linkL1Failed))
-        dispatch(updateConnectorName({ connectorName: undefined }))
+        updateLinkStatus(LinkStatus.linkL1Failed)
+        updateSelectedWallet(null)
         try {
           toast.error((e as any).message)
         } finally {
@@ -36,7 +31,7 @@ const useConnectWallet = () => {
         }
       }
     },
-    [currentConnectorName]
+    [selectedWallet]
   )
 }
 

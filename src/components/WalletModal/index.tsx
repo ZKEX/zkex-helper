@@ -9,13 +9,8 @@ import ModalLink from 'components/ModalLink'
 import { ConnectorNames } from 'connectors'
 import useConnectWallet from 'hooks/useConnectWallet'
 import { FC, memo, useCallback, useEffect, useState } from 'react'
-import { useAppDispatch } from 'store'
-import { updateModal } from 'store/app/actions'
-import { useModal } from 'store/app/hooks'
-import { updateLinkStatus } from 'store/link/actions'
-import { useLinkConnected, useLinkStatus } from 'store/link/hooks'
-import { LinkStatus } from 'store/link/types'
-import { useCurrentConnectorName } from 'store/settings/hooks'
+import { useSelectedWalletStore, useWalletStore } from 'store/app/wallet'
+import { LinkStatus, useLinkWalletStore } from 'store/link/wallet'
 import { ContentWrap, Flex, FlexCenter, FlexItem } from 'styles/index'
 
 const WalletItem = styled(Flex)`
@@ -66,27 +61,29 @@ const ErrorMessage = styled('div')`
 export const ChooseWallet: FC<{
   onSelect(connectorName: ConnectorNames): void
 }> = memo(({ onSelect }) => {
-  const dispatch = useAppDispatch()
   const connectWeb3 = useConnectWallet()
-  const currentConnectorName = useCurrentConnectorName()
-  const connected = useLinkConnected()
+  const { selectedWallet } = useSelectedWalletStore()
+  const { connected } = useLinkWalletStore()
   const hasEtherenum = !!window.ethereum
+  const { updateWalletModal } = useWalletStore()
   // If ethereum is exist but not metamask
-  const showDetected = window.ethereum && (window.ethereum as MetaMaskProvider)?.isMetaMask === false
+  const showDetected =
+    window.ethereum &&
+    (window.ethereum as MetaMaskProvider)?.isMetaMask === false
 
-  let timer: any;
+  let timer: any
   useEffect(() => {
-    if (currentConnectorName && connectWeb3) {
+    if (selectedWallet && connectWeb3) {
       if (timer) {
         clearTimeout(timer)
       }
       timer = setTimeout(() => {
-        connectWeb3(currentConnectorName)
+        connectWeb3(selectedWallet)
         timer = undefined
       }, 250)
-      dispatch(updateModal({ modal: 'wallets', open: false }))
+      updateWalletModal(false)
     }
-  }, [currentConnectorName, connectWeb3])
+  }, [selectedWallet, connectWeb3])
   return (
     <Stack spacing={2}>
       {hasEtherenum ? (
@@ -95,11 +92,17 @@ export const ChooseWallet: FC<{
             connectWeb3(ConnectorNames.MetaMask)
             onSelect(ConnectorNames.MetaMask)
           }}>
-          <FlexItem>{showDetected ? 'Detected Wallet' : ConnectorNames.MetaMask}</FlexItem>
-          {connected && currentConnectorName === ConnectorNames.MetaMask ? <Dot /> : null}
+          <FlexItem>
+            {showDetected ? 'Detected Wallet' : ConnectorNames.MetaMask}
+          </FlexItem>
+          {connected && selectedWallet === ConnectorNames.MetaMask ? (
+            <Dot />
+          ) : null}
           <Icon>
             {showDetected ? (
-              <span className="iconfont icon-wallet" style={{ fontSize: '24px' }}></span>
+              <span
+                className="iconfont icon-wallet"
+                style={{ fontSize: '24px' }}></span>
             ) : (
               <img width="20" src={metamaskUrl} />
             )}
@@ -112,7 +115,9 @@ export const ChooseWallet: FC<{
           onSelect(ConnectorNames.Coinbase)
         }}>
         <FlexItem>Coinbase Wallet</FlexItem>
-        {connected && currentConnectorName === ConnectorNames.Coinbase ? <Dot /> : null}
+        {connected && selectedWallet === ConnectorNames.Coinbase ? (
+          <Dot />
+        ) : null}
         <Icon>
           <SvgCoinbaseWallet />
         </Icon>
@@ -123,7 +128,9 @@ export const ChooseWallet: FC<{
           onSelect(ConnectorNames.WalletConnect)
         }}>
         <FlexItem>{ConnectorNames.WalletConnect}</FlexItem>
-        {connected && currentConnectorName === ConnectorNames.WalletConnect ? <Dot /> : null}
+        {connected && selectedWallet === ConnectorNames.WalletConnect ? (
+          <Dot />
+        ) : null}
         <Icon>
           <SvgWalletConnect />
         </Icon>
@@ -163,18 +170,17 @@ const ButtonTryAgain = styled(FlexCenter)`
 export const Failed: FC<{
   selected: ConnectorNames | undefined
 }> = memo(({ selected }) => {
-  const dispatch = useAppDispatch()
   const connectWeb3 = useConnectWallet()
-
+  const { updateLinkStatus } = useLinkWalletStore()
   const cleanErrorMessage = useCallback(() => {
-    dispatch(updateLinkStatus(LinkStatus.init))
+    updateLinkStatus(LinkStatus.init)
   }, [])
 
   return (
     <>
       <ErrorMessage>
-        The connection attempt failed. Please click try again and follow the steps to connect in
-        your wallet.
+        The connection attempt failed. Please click try again and follow the
+        steps to connect in your wallet.
       </ErrorMessage>
       <Stack direction={'row'} spacing={1} justifyContent="flex-end">
         <ButtonBack
@@ -204,20 +210,23 @@ export const Connecting = memo(() => {
 })
 
 export const WalletModal = memo(() => {
-  const dispatch = useAppDispatch()
-  const walletModal = useModal('wallets')
+  const { modal, updateWalletModal } = useWalletStore()
   const [selected, setSelected] = useState<ConnectorNames | undefined>()
-  const linkStatus = useLinkStatus()
-  const connecting = linkStatus === LinkStatus.linkL1Pending
-  const connectFail = linkStatus === LinkStatus.linkL1Failed
-  const header = connecting ? `Connecting` : connectFail ? `Error Connecting` : `Connect a wallet`
+  const { connectStatus } = useLinkWalletStore()
+  const connecting = connectStatus === LinkStatus.linkL1Pending
+  const connectFail = connectStatus === LinkStatus.linkL1Failed
+  const header = connecting
+    ? `Connecting`
+    : connectFail
+    ? `Error Connecting`
+    : `Connect a wallet`
   return (
     <ModalLink
       width="400px"
-      isIn={walletModal}
+      isIn={modal}
       header={header}
       onClose={() => {
-        dispatch(updateModal({ modal: 'wallets', open: false }))
+        updateWalletModal(false)
       }}>
       <ContentWrap>
         {connecting ? (

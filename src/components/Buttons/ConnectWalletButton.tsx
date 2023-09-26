@@ -1,10 +1,7 @@
-import { styled } from '@mui/material/styles'
+import { styled } from '@mui/material'
 import { FC, ReactNode, memo } from 'react'
-import { updateModal } from 'store/app/actions'
-import { useWeb3Connected } from 'store/app/hooks'
-import { useAppDispatch } from 'store/index'
-import { useLinkStatus } from 'store/link/hooks'
-import { LinkStatus } from 'store/link/types'
+import { useWalletStore, useWeb3Connected } from 'store/app/wallet'
+import { LinkStatus, useLinkWalletStore } from 'store/link/wallet'
 import { ActionButton } from './ActionButton'
 
 export const ConnectButtonWrap = styled(ActionButton)`
@@ -14,29 +11,23 @@ ConnectButtonWrap.defaultProps = {
   variant: 'contained',
   fullWidth: true,
 }
-export const ConnectWalletButton: FC<{ children?: ReactNode }> = memo(
-  () => {
-    const linkStatus = useLinkStatus()
-    const dispatch = useAppDispatch()
-    const web3Connected = useWeb3Connected()
+export const ConnectWalletButton: FC<{ children?: ReactNode }> = memo(() => {
+  const { connectStatus } = useLinkWalletStore()
+  const web3Connected = useWeb3Connected()
+  const { updateWalletModal } = useWalletStore()
 
-    const connecting =
-      linkStatus === LinkStatus.linkL1Pending ||
-      linkStatus === LinkStatus.linkL2Pending ||
-      linkStatus === LinkStatus.apiLoginPending
-    return (
-      <ConnectButtonWrap
-        loading={connecting}
-        disabled={connecting}
-        onClick={() => {
-          dispatch(updateModal({ modal: 'wallets', open: true }))
-        }}
-      >
-        {web3Connected
-          ? 'Connect ZKEX'
-          : 'Connect Wallet'
-        }
-      </ConnectButtonWrap>
-    )
-  }
-)
+  const connecting =
+    connectStatus === LinkStatus.linkL1Pending ||
+    connectStatus === LinkStatus.linkL2Pending ||
+    connectStatus === LinkStatus.apiLoginPending
+  return (
+    <ConnectButtonWrap
+      loading={connecting}
+      disabled={connecting}
+      onClick={() => {
+        updateWalletModal(true)
+      }}>
+      {web3Connected ? `Connect zkLink's Layer2` : 'Connect Wallet'}
+    </ConnectButtonWrap>
+  )
+})

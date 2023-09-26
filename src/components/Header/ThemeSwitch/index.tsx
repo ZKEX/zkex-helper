@@ -1,9 +1,7 @@
 import { styled } from '@mui/material'
 import Iconfont from 'components/Iconfont'
 import { memo, useCallback } from 'react'
-import { useAppDispatch } from 'store/index'
-import { updateTheme } from 'store/settings/actions'
-import { useCurrentThemeType } from 'store/settings/hooks'
+import { useThemeStore } from 'store/settings/theme'
 import { MuiThemeType } from 'styles/Themes'
 
 const ThemeWrap = styled('div')`
@@ -28,23 +26,23 @@ const ThemeWrap = styled('div')`
     align-items: center;
     background: ${(props) => props.theme.color.BgColor02};
     color: ${(props) => props.theme.color.PrimaryColor30};
-    left: ${(props) => (props.theme.palette.mode === MuiThemeType.dark ? '4px' : 'unset')};
-    right: ${(props) => (props.theme.palette.mode === MuiThemeType.light ? '4px' : 'unset')};
+    left: ${(props) =>
+      props.theme.palette.mode === MuiThemeType.dark ? '4px' : 'unset'};
+    right: ${(props) =>
+      props.theme.palette.mode === MuiThemeType.light ? '4px' : 'unset'};
   }
 `
 const ThemeSwitch = memo(() => {
-  const theme: string = useCurrentThemeType()
-  const dispatch = useAppDispatch()
+  const { currentTheme: theme, updateTheme } = useThemeStore()
 
   const selectTheme = useCallback(() => {
-
     let newTheme: MuiThemeType
     if (theme === MuiThemeType.dark) {
       newTheme = MuiThemeType.light
     } else {
       newTheme = MuiThemeType.dark
     }
-    dispatch(updateTheme(newTheme))
+    updateTheme(newTheme)
   }, [theme])
   return (
     <ThemeWrap onClick={selectTheme}>

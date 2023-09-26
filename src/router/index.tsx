@@ -1,35 +1,42 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { ActivateView } from 'views/Account/Activate'
 import BalanceView from 'views/Balance'
 import { Layer2HashView } from 'views/Layer2Hash'
+import { MainView } from 'views/Main'
 import { SignView } from 'views/Sign'
-import { OnChainView } from 'views/Sign/OnChain'
+import { ChangePubKeyView } from 'views/Sign/ChangePubKey'
 import { TransferView } from 'views/Sign/Transfer'
+import { TransactionSenderView } from 'views/Transaction/Sender'
 
 export const routerItems = [
   {
     path: '/',
-    element: <Layer2HashView />,
-  },
-  {
-    path: '/account',
-    element: <ActivateView />,
-  },
-  {
-    path: '/balance',
-    element: <BalanceView />,
-  },
-  {
-    path: '/sign',
-    element: <SignView />,
+    element: <MainView />,
     children: [
       {
-        path: 'changepubkey',
-        element: <OnChainView />,
+        path: '',
+        element: <Layer2HashView />,
       },
       {
-        path: 'transfer',
-        element: <TransferView />,
+        path: '/balance',
+        element: <BalanceView />,
+      },
+      {
+        path: '/sign',
+        element: <SignView />,
+        children: [
+          {
+            path: 'changepubkey',
+            element: <ChangePubKeyView />,
+          },
+          {
+            path: 'transfer',
+            element: <TransferView />,
+          },
+        ],
+      },
+      {
+        path: 'transaction/sender',
+        element: <TransactionSenderView />,
       },
     ],
   },

@@ -1,10 +1,10 @@
 import { Interface } from '@ethersproject/abi'
 import { Contract } from '@ethersproject/contracts'
-import { Web3Provider } from '@ethersproject/providers'
+import { providers } from 'ethers'
 import MulticallAbi from './abis/multicall.json'
 
 export const sendMulticall = async (
-  provider: Web3Provider,
+  provider: providers.JsonRpcProvider,
   contractAddress: string,
   abi: string[],
   functionName: string,

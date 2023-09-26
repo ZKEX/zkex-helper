@@ -2,32 +2,35 @@ import { ConnectorNames } from '@/connectors'
 import { Web3Provider } from '@ethersproject/providers'
 import { useWeb3React } from '@web3-react/core'
 import { useCallback } from 'react'
-import { connectLinkWallet, useLinkStatus } from 'store/link/hooks'
-import { LinkStatus } from 'store/link/types'
-import { useCurrentConnectorName } from 'store/settings/hooks'
+import { useSelectedWalletStore } from 'store/app/wallet'
+import {
+  LinkStatus,
+  connectLinkWallet,
+  useLinkWalletStore,
+} from 'store/link/wallet'
 
 const useConnectLinkWallet = () => {
-  const currentConnectorName = useCurrentConnectorName()
-  const linkStatus = useLinkStatus()
+  const { selectedWallet } = useSelectedWalletStore()
+  const { connectStatus } = useLinkWalletStore()
   const context = useWeb3React<Web3Provider>()
   const { provider } = context
   return useCallback(
     async (connectorName?: ConnectorNames) => {
       try {
-        if (linkStatus === LinkStatus.linkL2Pending) {
+        if (connectStatus === LinkStatus.linkL2Pending) {
           return
         }
         if (!provider) {
           return
         }
-        if (connectorName || currentConnectorName) {
+        if (connectorName || selectedWallet) {
           await connectLinkWallet(provider)
         }
       } catch (e) {
         console.log(e)
       }
     },
-    [LinkStatus, currentConnectorName, provider]
+    [LinkStatus, selectedWallet, provider]
   )
 }
 

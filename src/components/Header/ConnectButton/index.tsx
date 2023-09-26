@@ -2,10 +2,8 @@ import { Button, styled } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import Iconfont from 'components/Iconfont'
 import { memo } from 'react'
-import { updateModal } from 'store/app/actions'
-import { useAddress, useWeb3Connected } from 'store/app/hooks'
-import { useAppDispatch } from 'store/index'
-import { useLinkConnected } from 'store/link/hooks'
+import { useAddress, useWalletStore, useWeb3Connected } from 'store/app/wallet'
+import { useLinkWalletStore } from 'store/link/wallet'
 import { encryptionAddress } from 'utils/address'
 
 export const ConnectButtonWrap = styled(Button)`
@@ -26,17 +24,15 @@ export const ConnectButtonWrap = styled(Button)`
 `
 
 export const ConnectButton = memo(() => {
-  const dispatch = useAppDispatch()
-  const connected = useLinkConnected()
+  const { connected } = useLinkWalletStore()
   const address = useAddress()
   const web3Connected = useWeb3Connected()
   const { ENSName } = useWeb3React()
+  const { updateWalletModal } = useWalletStore()
 
   const onClickConnectButton = () => {
     if (!web3Connected) {
-      dispatch(updateModal({ modal: 'wallets', open: true }))
-    } else {
-      dispatch(updateModal({ modal: 'account', open: true }))
+      updateWalletModal(true)
     }
   }
 
@@ -56,6 +52,8 @@ export const ConnectButton = memo(() => {
   }
 
   return (
-    <ConnectButtonWrap onClick={onClickConnectButton}>{renderConnectButton()}</ConnectButtonWrap>
+    <ConnectButtonWrap onClick={onClickConnectButton}>
+      {renderConnectButton()}
+    </ConnectButtonWrap>
   )
 })

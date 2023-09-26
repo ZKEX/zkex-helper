@@ -1,21 +1,36 @@
-import { useEffectOnce } from "usehooks-ts"
-import { useAppDispatch } from ".."
-import { getAppTokensAction, getContractsAddressAction, getFullNetworkAction, getSupportNetworkAction } from "./actions"
+import { useEffectOnce } from 'usehooks-ts'
+import { useSupportChainsStore } from './chains'
+import { useContractsStore } from './contracts'
+import { useSupportTokensStore } from './tokens'
 
-const useAppInfo = () => {
-  const dispatch = useAppDispatch()
+function useFetchSupportChains() {
+  const { fetch } = useSupportChainsStore()
 
   useEffectOnce(() => {
-    dispatch(getSupportNetworkAction())
-    dispatch(getFullNetworkAction())
-    dispatch(getContractsAddressAction())
-    dispatch(getAppTokensAction())
+    fetch()
+  })
+}
+
+function useFetchSupportTokens() {
+  const { fetch } = useSupportTokensStore()
+
+  useEffectOnce(() => {
+    fetch()
+  })
+}
+
+function useFetchContracts() {
+  const { fetch } = useContractsStore()
+
+  useEffectOnce(() => {
+    fetch()
   })
 }
 
 const Updater = () => {
-
-  useAppInfo()
+  useFetchSupportChains()
+  useFetchSupportTokens()
+  useFetchContracts()
 
   return null
 }

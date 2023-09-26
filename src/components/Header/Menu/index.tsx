@@ -1,12 +1,12 @@
 import { styled } from '@mui/material'
 import { memo } from 'react'
-import { Link, useLocation, useRoutes } from 'react-router-dom'
-import { routerItems } from 'router/index'
+import { Link, useLocation } from 'react-router-dom'
 
 const MenuWrap = styled('div')`
   display: flex;
   align-items: center;
   flex-direction: row;
+  flex: 1;
   height: 100%;
   list-style: none;
   margin: 0 10px;
@@ -78,6 +78,10 @@ const menuRouterList: IMenuRouterList[] = [
     path: '/sign/transfer',
   },
   {
+    name: 'Transaction Sender',
+    path: '/transaction/sender',
+  },
+  {
     name: 'Broker Balance',
     path: '/balance',
   },
@@ -85,8 +89,6 @@ const menuRouterList: IMenuRouterList[] = [
 
 export const Menu = memo(() => {
   const location = useLocation()
-  const routes = useRoutes(routerItems)
-  console.log(routes)
 
   return (
     <MenuWrap>

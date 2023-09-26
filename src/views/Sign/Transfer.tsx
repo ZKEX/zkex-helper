@@ -1,12 +1,19 @@
-import { Button, Stack, TextField } from '@mui/material'
+import { Button, Container, Grid, Stack } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import { getAccount } from 'api/zklink/getAccount'
 import axios from 'axios'
-import { ZKEX_API_URL, ZKLINK_API_URL } from 'config/index'
+import { CodeBoard } from 'components/CodeBoard'
+import { FillButton } from 'components/Form/FillButton'
+import { FormOutlinedInput } from 'components/Form/FormOutlinedInput'
+import { ZKEX_API_URL } from 'config/index'
 import { BigNumber, providers } from 'ethers'
 import { isAddress, parseEther } from 'ethers/lib/utils'
-import { memo, useEffect, useState } from 'react'
-import { useLinkWallet } from 'store/link/hooks'
-import { closestPackableTransactionFee } from 'zklink-js-sdk'
+import { memo, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { useLinkWalletStore } from 'store/link/wallet'
+import { getCurlTemplate, getRequestBody } from 'utils/requestTemplate'
+import { SignedTransaction, closestPackableTransactionFee } from 'zklink-js-sdk'
 
 export async function estimateTxFee(params: {
   txType: 3 | 4 | 6 // 4: transfer  3: withdraw  6: changepubkey`
@@ -52,58 +59,31 @@ async function login(provider: providers.JsonRpcProvider) {
   return r
 }
 
-export const TransferView = memo(() => {
-  const wallet = useLinkWallet()
-  const { provider } = useWeb3React()
-  const fromAddress = wallet?.address()
+interface Form {
+  accountId: string
+  fromSubAccountId: string
+  toSubAccountId: string
+  toAddress: string
+  tokenId: string
+  tokenSymbol: string
+  amount: string
+  fee: string
+  subNonce: string
+}
 
-  const [accountId, setAccountId] = useState<string>('0')
-  const [fromSubAccountId, setFromSubAccountId] = useState<string>('0')
-  const [toSubAccountId, setToSubAccountId] = useState<string>('0')
-  const [toAddress, setToAddress] = useState<string>('')
-  const [tokenId, setTokenId] = useState<string>('')
-  const [tokenSymbol, setTokenSymbol] = useState<string>('')
-  const [amount, setAmount] = useState<string>('')
-  const [fee, setFee] = useState<BigNumber>()
-  const [subNonce, setSubNonce] = useState<string>('')
+export const TransferView = memo(() => {
+  const { address, wallet } = useLinkWalletStore()
+  const { provider } = useWeb3React()
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    // formState: { errors },
+  } = useForm<Form>()
   const [accessToken, setAccessToken] = useState()
 
-  const [curl, setCurl] = useState<any>()
-
-  useEffect(() => {
-    if (!tokenId) {
-      return
-    }
-    if (!accessToken) {
-    }
-    estimateTxFee({
-      txType: 4,
-      tokenId: Number(tokenId),
-    }).then((r) => {
-      setFee(closestPackableTransactionFee(parseEther(r.txFee)))
-    })
-  }, [tokenId, accessToken])
-
-  useEffect(() => {
-    if (!fromAddress) {
-      return
-    }
-    axios
-      .post(ZKLINK_API_URL, {
-        jsonrpc: '2.0',
-        method: 'getAccount',
-        params: [fromAddress],
-        id: 1,
-      })
-      .then((r) => r.data)
-      .then((r) => {
-        if (r.result?.subAccountNonces) {
-          setSubNonce(String(r.result?.subAccountNonces[fromSubAccountId]))
-        } else {
-          setSubNonce('0')
-        }
-      })
-  }, [fromSubAccountId, fromAddress])
+  const [signedData, setSignedData] = useState<SignedTransaction>()
 
   if (!accessToken) {
     return (
@@ -119,159 +99,180 @@ export const TransferView = memo(() => {
               setAccessToken(v)
             })
           }}>
-          Authorize ZKEX
+          Authorize ZKEX's Services
         </Button>
       </Stack>
     )
   }
 
+  const onSubmit = async ({
+    accountId,
+    fromSubAccountId,
+    toSubAccountId,
+    toAddress,
+    tokenId,
+    tokenSymbol,
+    amount,
+    fee,
+    subNonce,
+  }: Form) => {
+    if (!fee) {
+      alert('cannot estimate tx fee')
+      return
+    }
+    if (!isAddress(toAddress)) {
+      toast.error('invalid to address')
+      return
+    }
+    const signedTransaction = await wallet?.signTransfer({
+      accountId: Number(accountId),
+      fromSubAccountId: Number(fromSubAccountId),
+      toSubAccountId: Number(toSubAccountId),
+      to: toAddress,
+      tokenId: Number(tokenId),
+      tokenSymbol: tokenSymbol,
+      amount: closestPackableTransactionFee(BigNumber.from(amount).sub(fee!)),
+      fee: BigNumber.from(fee),
+      nonce: Number(subNonce),
+    })
+
+    setSignedData(signedTransaction)
+  }
   return (
-    <Stack spacing={2}>
-      <Stack>
-        <TextField
-          id="accountId"
-          label="Account ID"
-          variant="outlined"
-          value={accountId}
-          onChange={(e) => {
-            setAccountId(e.target.value)
-          }}
-        />
-      </Stack>
-      <Stack>
-        <TextField
-          id="fromSubAccountId"
-          label="From Sub Account ID"
-          variant="outlined"
-          value={fromSubAccountId}
-          onChange={(e) => {
-            setFromSubAccountId(e.target.value)
-          }}
-        />
-      </Stack>
-      <Stack>
-        <TextField
-          id="toSubAccountId"
-          label="To Sub Account ID"
-          variant="outlined"
-          value={toSubAccountId}
-          onChange={(e) => {
-            setToSubAccountId(e.target.value)
-          }}
-        />
-      </Stack>
-      <Stack>
-        <TextField
-          id="toAddress"
-          label="To Address"
-          variant="outlined"
-          value={toAddress}
-          onChange={(e) => {
-            setToAddress(e.target.value)
-          }}
-        />
-      </Stack>
-      <Stack>
-        <TextField
-          id="tokenId"
-          label="Token ID"
-          variant="outlined"
-          onChange={(e) => {
-            setTokenId(e.target.value)
-          }}
-        />
-      </Stack>
-      <Stack>
-        <TextField
-          id="tokenSymbol"
-          label="Token Symbol"
-          variant="outlined"
-          value={tokenSymbol}
-          onChange={(e) => {
-            setTokenSymbol(e.target.value)
-          }}
-        />
-      </Stack>
-      <Stack>
-        <TextField
-          id="amount"
-          label="Amount"
-          variant="outlined"
-          onChange={(e) => {
-            setAmount(e.target.value)
-          }}
-        />
-      </Stack>
-      <Stack>
-        <TextField
-          id="fee"
-          value={fee ? fee.toString() : '0'}
-          label="Transaction Fee"
-          variant="outlined"
-          onChange={(e) => {
-            setAmount(e.target.value)
-          }}
-        />
-      </Stack>
-      <Stack>
-        <TextField
-          id="subNonce"
-          value={subNonce}
-          label="Sub Nonce"
-          variant="outlined"
-          onChange={(e) => {
-            setSubNonce(e.target.value)
-          }}
-        />
-      </Stack>
+    <Container maxWidth="md" sx={{ pt: 4 }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <FormOutlinedInput
+              label={'Account ID'}
+              defaultValue={0}
+              endAdornment={
+                <FillButton
+                  onClick={() => {
+                    toast.promise(
+                      getAccount(address).then((r) => {
+                        setValue('accountId', r.result.id)
+                      }),
+                      {
+                        loading: 'Filling',
+                        success: 'Fill Successful',
+                        error: 'Fill Failed',
+                      }
+                    )
+                  }}
+                />
+              }
+              register={register('accountId', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <FormOutlinedInput
+              label="From Sub Account ID"
+              register={register('fromSubAccountId', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <FormOutlinedInput
+              label="To Sub Account ID"
+              register={register('toSubAccountId', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormOutlinedInput
+              label="To Address"
+              register={register('toAddress', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormOutlinedInput
+              label="Token ID"
+              register={register('tokenId', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormOutlinedInput
+              label="Token Symbol"
+              register={register('tokenSymbol', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormOutlinedInput
+              label="Amount"
+              register={register('amount', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormOutlinedInput
+              label="Transaction Fee"
+              defaultValue={'0'}
+              endAdornment={
+                <FillButton
+                  onClick={() => {
+                    const values = getValues()
+                    const { tokenId } = values
+                    estimateTxFee({
+                      txType: 4,
+                      tokenId: Number(tokenId),
+                    }).then((r) => {
+                      setValue(
+                        'fee',
+                        closestPackableTransactionFee(
+                          parseEther(r.txFee)
+                        ).toString()
+                      )
+                    })
+                  }}
+                />
+              }
+              register={register('fee', { required: true })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormOutlinedInput
+              label="Sub Nonce"
+              defaultValue={'0'}
+              endAdornment={
+                <FillButton
+                  onClick={() => {
+                    const values = getValues()
+                    const { fromSubAccountId } = values
+                    toast.promise(
+                      getAccount(address).then((r) => {
+                        setValue(
+                          'subNonce',
+                          r.result.subAccountNonces[fromSubAccountId]
+                        )
+                      }),
+                      {
+                        loading: 'Filling',
+                        success: 'Fill Successful',
+                        error: 'Fill Failed',
+                      }
+                    )
+                  }}
+                />
+              }
+              register={register('subNonce', { required: true })}
+            />
+          </Grid>
 
-      <Button
-        variant="contained"
-        onClick={async () => {
-          if (!amount) {
-            alert('please enter amount')
-            return
-          }
-          if (!fee) {
-            alert('cannot estimate tx fee')
-            return
-          }
-          if (!isAddress(toAddress)) {
-            alert('invalid to address')
-            return
-          }
-          const data = await wallet?.signTransfer({
-            accountId: Number(accountId),
-            fromSubAccountId: Number(fromSubAccountId),
-            toSubAccountId: Number(toSubAccountId),
-            to: toAddress,
-            tokenId: Number(tokenId),
-            tokenSymbol: tokenSymbol,
-            amount: closestPackableTransactionFee(
-              BigNumber.from(amount).sub(fee!)
-            ),
-            fee: BigNumber.from(fee),
-            nonce: Number(subNonce),
-          })!
+          <Grid item xs={12}>
+            <Button fullWidth variant="contained" type="submit">
+              Sign Transaction
+            </Button>
+          </Grid>
 
-          setCurl(`
-            curl --location 'http://127.0.0.1:3030'
-            --data '{
-              "id": 1,
-              "jsonrpc": "2.0",
-              "method": "sendTransaction",
-              "params": [
-                ${JSON.stringify(data.tx)},
-                ${JSON.stringify(data.ethereumSignature)},
-                null
-              ]
-            }'
-          `)
-        }}>
-        Sign Transaction
-      </Button>
-
-      <code>{curl}</code>
-    </Stack>
+          <Grid item xs={12}>
+            <CodeBoard title="Request Body" code={getRequestBody(signedData)} />
+          </Grid>
+          <Grid item xs={12}>
+            <CodeBoard
+              title="Curl Template"
+              code={getCurlTemplate(signedData)}
+            />
+          </Grid>
+        </Grid>
+      </form>
+    </Container>
   )
 })

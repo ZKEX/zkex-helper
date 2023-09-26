@@ -1,6 +1,5 @@
 import { styled } from '@mui/material'
 import { memo } from 'react'
-import { FlexItem } from 'styles/index'
 import { ConnectButton } from './ConnectButton'
 import { Logo } from './Logo'
 import { Menu } from './Menu'
@@ -25,9 +24,7 @@ export const Nav = memo(() => {
   return (
     <NavWrap>
       <Logo />
-      <FlexItem>
-        <Menu />
-      </FlexItem>
+      <Menu />
       <ConnectButton />
       <ThemeSwitch />
     </NavWrap>

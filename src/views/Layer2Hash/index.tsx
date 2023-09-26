@@ -1,53 +1,50 @@
 import { Stack, styled } from '@mui/material'
-import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
-import { Nav } from 'components/Header'
 import Iconfont from 'components/Iconfont'
 import copy from 'copy-to-clipboard'
 import { arrayify, hexlify } from 'ethers/lib/utils'
 import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { useLinkConnected, useLinkWallet } from 'store/link/hooks'
-import { FlexCenter } from 'styles'
+import { useLinkWalletStore } from 'store/link/wallet'
+import { Wrapper } from 'views/styles'
 
-const IndexBody = styled(FlexCenter)`
-  width: 100%;
-  height: 100%;
-`
-const ContentWrap = styled(FlexCenter)`
-  min-width: 200px;
-  flex-direction: column;
-`
 const KeyWrap = styled(Stack)`
   flex-direction: row;
-  align-items: center;
-  margin: 8px 0 0;
+  margin: 16px 0 0;
   gap: 8px;
   width: 100%;
-  .value {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 4px;
-    &:hover {
-      background-color: rgba(160, 238, 9, 0.2);
-    }
-  }
-  .name {
-    font-size: 14px;
-    background: ${(props) => props.theme.color.DarkBg03LightBg01};
-    border-radius: 4px;
-    padding: 4px 8px;
-  }
+
   .copy-icon {
     cursor: pointer;
   }
 `
+const Label = styled('div')`
+  width: 100px;
+  flex-shrink: 0;
+  font-size: 14px;
+  span {
+    display: inline-block;
+    background: ${(props) => props.theme.color.DarkBg03LightBg01};
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+`
+const Value = styled('div')`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  word-break: break-all;
 
-const CryptoInfo = () => {
-  const wallet = useLinkWallet()
+  &:hover {
+    background-color: rgba(160, 238, 9, 0.2);
+  }
+`
+
+export const Layer2HashView = () => {
+  const { wallet } = useLinkWalletStore()
   const [pubKey, setPubKey] = useState<Uint8Array>()
   const [pubKeyHash, setPubKeyHash] = useState<Uint8Array>()
   const [privateKey, setPrivateKey] = useState<Uint8Array>()
@@ -77,49 +74,43 @@ const CryptoInfo = () => {
   }, [])
 
   return (
-    <>
+    <Wrapper sx={{ p: '240px 0' }} maxWidth="md">
       <KeyWrap onClick={() => copyAddress(pubKeyHash)}>
-        <span className="name">PubKeyHash:</span>
-        <div className="value">
+        <Label>
+          <span>PubKeyHash</span>
+        </Label>
+        <Value>
           {pubKeyHash ? hexlify(pubKeyHash) : '-'}
           <Iconfont className="copy-icon" name="icon-copy1" size={16} />
-        </div>
+        </Value>
       </KeyWrap>
       <KeyWrap onClick={() => copyAddress(pubKey)}>
-        <span className="name">PubKey:</span>
-        <div className="value">
+        <Label>
+          <span>PubKey</span>
+        </Label>
+        <Value>
           {pubKey ? hexlify(pubKey) : '-'}
           <Iconfont className="copy-icon" name="icon-copy1" size={16} />
-        </div>
+        </Value>
       </KeyWrap>
       <KeyWrap onClick={() => copyAddress(privateKey)}>
-        <span className="name">PrivateKey:</span>
-        <div className="value">
+        <Label>
+          <span>PrivateKey</span>
+        </Label>
+        <Value>
           {privateKey ? hexlify(privateKey) : '-'}
           <Iconfont className="copy-icon" name="icon-copy1" size={16} />
-        </div>
+        </Value>
       </KeyWrap>
       <KeyWrap onClick={() => copyAddress(ethSignature)}>
-        <span className="name">EthSignature:</span>
-        <div className="value">
+        <Label>
+          <span>EthSignature</span>
+        </Label>
+        <Value>
           {ethSignature ? hexlify(ethSignature) : '-'}
           <Iconfont className="copy-icon" name="icon-copy1" size={16} />
-        </div>
+        </Value>
       </KeyWrap>
-    </>
-  )
-}
-
-export const Layer2HashView = () => {
-  const linkConnected = useLinkConnected()
-  return (
-    <>
-      <Nav />
-      <IndexBody>
-        <ContentWrap>
-          {linkConnected ? <CryptoInfo /> : <ConnectWalletButton />}
-        </ContentWrap>
-      </IndexBody>
-    </>
+    </Wrapper>
   )
 }
