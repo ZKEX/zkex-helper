@@ -16,6 +16,7 @@ import toast from 'react-hot-toast'
 import { useTransactionSenderStore } from 'store/link/transaction'
 import { useLinkWalletStore } from 'store/link/wallet'
 import { Wrapper } from 'views/styles'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 interface Form {
   body: string
@@ -38,6 +39,7 @@ export function TransactionSenderView() {
 
   return (
     <Wrapper maxWidth="md" sx={{ pt: 2 }}>
+      <Breadcrumbs style={{margin:'74px 0 20px'}}/>
       <Stack spacing={2}>
         <FormControl fullWidth variant="outlined">
           <InputLabel htmlFor="request-body">

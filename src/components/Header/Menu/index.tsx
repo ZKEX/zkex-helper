@@ -67,7 +67,7 @@ interface IMenuRouterList {
 const menuRouterList: IMenuRouterList[] = [
   {
     name: 'Layer2 Hash',
-    path: '/',
+    path: '/Layer2Hash',
   },
   {
     name: 'Sign ChangePubKey',

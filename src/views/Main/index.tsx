@@ -4,7 +4,6 @@ import { Nav } from 'components/Header'
 import { Outlet } from 'react-router-dom'
 import { useLinkWalletStore } from 'store/link/wallet'
 import { Wrapper } from 'views/styles'
-import Breadcrumbs from 'components/Breadcrumbs'
 import { useLocation } from 'react-router-dom'
 
 export function MainView() {
@@ -13,9 +12,6 @@ export function MainView() {
   return (
     <>
       <Nav />
-      {pathname === '/' ? null : (
-        <Breadcrumbs pathname={pathname} homepage={'Home'} />
-      )}
       {connected ? (
         <Outlet />
       ) : (
