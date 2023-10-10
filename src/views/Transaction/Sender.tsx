@@ -37,7 +37,7 @@ export function TransactionSenderView() {
   }, [transactions])
 
   return (
-    <Wrapper maxWidth="md" sx={{ pt: 12 }}>
+    <Wrapper maxWidth="md" sx={{ pt: 2 }}>
       <Stack spacing={2}>
         <FormControl fullWidth variant="outlined">
           <InputLabel htmlFor="request-body">

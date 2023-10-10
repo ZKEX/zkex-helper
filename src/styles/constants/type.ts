@@ -90,4 +90,7 @@ export interface ColorType {
   BoxDialogBg02: string
   BoxHistoryRow: string
   TableRow: string
+  BgColorDarkPopupBg: string
+  BoxHashWrapBg: string
+  BoxHashTextDec: string
 }

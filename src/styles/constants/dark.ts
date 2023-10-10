@@ -90,4 +90,7 @@ export const DarkColor = {
   BoxDialogBg02: 'rgba(35, 37, 45, 1)',
   BoxHistoryRow: 'rgba(172, 172, 172, 0.10)',
   TableRow: 'rgb(35, 37, 45)',
+  BgColorDarkPopupBg:'rgba(172, 172, 172, 0.10)',
+  BoxHashWrapBg: '#23252D',
+  BoxHashTextDec: 'rgba(229, 234, 238, 1)'
 }

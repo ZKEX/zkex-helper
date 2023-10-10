@@ -21,7 +21,7 @@ const { Table, TableBody, TableCell, TableHead, TableRow, TableContainer } =
 const BalanceBody = styled('div')`
   width: 100%;
   height: 100%;
-  padding: 85px 18px 18px;
+  padding: 20px 18px 18px;
 `
 const Span = styled('span')`
   &.s1 {

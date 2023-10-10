@@ -5,7 +5,7 @@ import { Wrapper } from 'views/styles'
 export const SignView = memo(() => {
   return (
     <Wrapper maxWidth="md">
-      <Outlet></Outlet>
+      <Outlet/>
     </Wrapper>
   )
 })
