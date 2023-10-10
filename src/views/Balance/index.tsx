@@ -14,6 +14,7 @@ import { isGasAddress, isZeroAddress } from 'utils/address'
 import { createWeb3Provider } from 'utils/getWeb3Provider'
 import { toSafeFixed } from 'utils/math'
 import { sendMulticall } from 'utils/multicall'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 const { Table, TableBody, TableCell, TableHead, TableRow, TableContainer } =
   SysTable
@@ -21,7 +22,7 @@ const { Table, TableBody, TableCell, TableHead, TableRow, TableContainer } =
 const BalanceBody = styled('div')`
   width: 100%;
   height: 100%;
-  padding: 85px 18px 18px;
+  padding: 20px 18px 18px;
 `
 const Span = styled('span')`
   &.s1 {
@@ -258,6 +259,7 @@ const BalanceView = () => {
   return (
     <>
       <Nav />
+      <Breadcrumbs style={{marginTop:'84px'}}/>
       <BalanceBody>
         <TableContainer sx={{ maxHeight: '100%' }}>
           <Table stickyHeader>

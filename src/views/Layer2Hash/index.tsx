@@ -5,14 +5,28 @@ import { arrayify, hexlify } from 'ethers/lib/utils'
 import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useLinkWalletStore } from 'store/link/wallet'
-import { Wrapper } from 'views/styles'
+import Breadcrumbs from 'components/Breadcrumbs'
 
+const Wrap = styled('div')`
+  position: relative;
+  max-width: 1100px;
+  height: calc(100% - 104px);
+  margin: 84px auto 20px;
+  padding: 24px;
+  border-radius: 8px;
+  background: ${(props) => props.theme.color.BoxHashWrapBg};
+`
+const Container = styled('div')`
+  margin-top: 140px;
+  padding: 100px 49px;
+  border-radius: 8px;
+  background: ${(props) => props.theme.color.BgColor02};
+`
 const KeyWrap = styled(Stack)`
   flex-direction: row;
   margin: 16px 0 0;
   gap: 8px;
   width: 100%;
-
   .copy-icon {
     cursor: pointer;
   }
@@ -31,6 +45,7 @@ const Label = styled('div')`
 const Value = styled('div')`
   display: flex;
   align-items: center;
+  max-width: 800px;
   gap: 4px;
   padding: 4px 8px;
   cursor: pointer;
@@ -74,43 +89,46 @@ export const Layer2HashView = () => {
   }, [])
 
   return (
-    <Wrapper sx={{ p: '240px 0' }} maxWidth="md">
-      <KeyWrap onClick={() => copyAddress(pubKeyHash)}>
-        <Label>
-          <span>PubKeyHash</span>
-        </Label>
-        <Value>
-          {pubKeyHash ? hexlify(pubKeyHash) : '-'}
-          <Iconfont className="copy-icon" name="icon-copy1" size={16} />
-        </Value>
-      </KeyWrap>
-      <KeyWrap onClick={() => copyAddress(pubKey)}>
-        <Label>
-          <span>PubKey</span>
-        </Label>
-        <Value>
-          {pubKey ? hexlify(pubKey) : '-'}
-          <Iconfont className="copy-icon" name="icon-copy1" size={16} />
-        </Value>
-      </KeyWrap>
-      <KeyWrap onClick={() => copyAddress(privateKey)}>
-        <Label>
-          <span>PrivateKey</span>
-        </Label>
-        <Value>
-          {privateKey ? hexlify(privateKey) : '-'}
-          <Iconfont className="copy-icon" name="icon-copy1" size={16} />
-        </Value>
-      </KeyWrap>
-      <KeyWrap onClick={() => copyAddress(ethSignature)}>
-        <Label>
-          <span>EthSignature</span>
-        </Label>
-        <Value>
-          {ethSignature ? hexlify(ethSignature) : '-'}
-          <Iconfont className="copy-icon" name="icon-copy1" size={16} />
-        </Value>
-      </KeyWrap>
-    </Wrapper>
+    <Wrap>
+      <Breadcrumbs />
+      <Container>
+        <KeyWrap onClick={() => copyAddress(pubKeyHash)}>
+          <Label>
+            <span>PubKeyHash</span>
+          </Label>
+          <Value>
+            {pubKeyHash ? hexlify(pubKeyHash) : '-'}
+            <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+          </Value>
+        </KeyWrap>
+        <KeyWrap onClick={() => copyAddress(pubKey)}>
+          <Label>
+            <span>PubKey</span>
+          </Label>
+          <Value>
+            {pubKey ? hexlify(pubKey) : '-'}
+            <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+          </Value>
+        </KeyWrap>
+        <KeyWrap onClick={() => copyAddress(privateKey)}>
+          <Label>
+            <span>PrivateKey</span>
+          </Label>
+          <Value>
+            {privateKey ? hexlify(privateKey) : '-'}
+            <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+          </Value>
+        </KeyWrap>
+        <KeyWrap onClick={() => copyAddress(ethSignature)}>
+          <Label>
+            <span>EthSignature</span>
+          </Label>
+          <Value>
+            {ethSignature ? hexlify(ethSignature) : '-'}
+            <Iconfont className="copy-icon" name="icon-copy1" size={16} />
+          </Value>
+        </KeyWrap>
+      </Container>
+    </Wrap>
   )
 }

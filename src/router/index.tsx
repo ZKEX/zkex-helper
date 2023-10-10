@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
+import {HomeView} from 'views/Home'
 import BalanceView from 'views/Balance'
 import { Layer2HashView } from 'views/Layer2Hash'
 import { MainView } from 'views/Main'
@@ -14,6 +15,10 @@ export const routerItems = [
     children: [
       {
         path: '',
+        element: <HomeView />,
+      },
+      {
+        path: '/Layer2Hash',
         element: <Layer2HashView />,
       },
       {

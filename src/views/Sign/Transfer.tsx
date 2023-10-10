@@ -14,6 +14,7 @@ import toast from 'react-hot-toast'
 import { useLinkWalletStore } from 'store/link/wallet'
 import { getCurlTemplate, getRequestBody } from 'utils/requestTemplate'
 import { SignedTransaction, closestPackableTransactionFee } from 'zklink-js-sdk'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 export async function estimateTxFee(params: {
   txType: 3 | 4 | 6 // 4: transfer  3: withdraw  6: changepubkey`
@@ -140,6 +141,7 @@ export const TransferView = memo(() => {
   }
   return (
     <Container maxWidth="md" sx={{ pt: 4 }}>
+      <Breadcrumbs style={{margin:'54px 0 20px'}}/>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={4}>
