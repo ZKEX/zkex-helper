@@ -205,6 +205,7 @@ export const TransferView = memo(() => {
             <FormOutlinedInput
               label="Amount"
               register={register('amount', { required: true })}
+              placeholder="E.g. 1000000000000000000"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
