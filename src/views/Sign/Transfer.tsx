@@ -13,7 +13,11 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useLinkWalletStore } from 'store/link/wallet'
 import { getCurlTemplate, getRequestBody } from 'utils/requestTemplate'
-import { SignedTransaction, closestPackableTransactionFee } from 'zklink-js-sdk'
+import {
+  SignedTransaction,
+  closestPackableTransactionAmount,
+  closestPackableTransactionFee,
+} from 'zklink-js-sdk'
 
 export async function estimateTxFee(params: {
   txType: 3 | 4 | 6 // 4: transfer  3: withdraw  6: changepubkey`
@@ -131,7 +135,9 @@ export const TransferView = memo(() => {
       to: toAddress,
       tokenId: Number(tokenId),
       tokenSymbol: tokenSymbol,
-      amount: closestPackableTransactionFee(BigNumber.from(amount).sub(fee!)),
+      amount: closestPackableTransactionAmount(
+        BigNumber.from(amount).sub(fee!)
+      ),
       fee: BigNumber.from(fee),
       nonce: Number(subNonce),
     })
